@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:projects/viewmodels/child_menu_viewmodel.dart';
 import 'package:projects/viewmodels/home_viewmodel.dart';
 import 'package:projects/viewmodels/settings_viewmodel.dart';
+import 'package:projects/views/screens/graphmotor_screen.dart';
 import 'package:projects/views/screens/home_screen.dart';
+import 'package:projects/views/screens/stereotypical_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:projects/views/screens/childdata_screen.dart';
 import 'package:projects/views/screens/childnumber_screen.dart';
@@ -39,10 +41,12 @@ class MyApp extends StatelessWidget {
         //home: CreateAccountScreen(),
         //home: OtpScreen(phoneNumber: '+201001234567'),
         //home: ChildNumberScreen(),
-        home: ChildDataScreen(),
+        //home: ChildDataScreen(),
 
         // ✅ Default screen
         //home: const HomeScreen(),
+        //home: GraphmotorScreen(),
+        home: StereotypicalScreen(),
 
         theme: ThemeData(
           primarySwatch: Colors.blue,

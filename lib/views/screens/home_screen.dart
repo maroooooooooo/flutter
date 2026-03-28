@@ -1,16 +1,51 @@
 import 'package:flutter/material.dart';
 import 'package:projects/viewmodels/home_viewmodel.dart';
+import 'package:projects/views/screens/assessment_screen.dart';
 import 'package:projects/views/screens/child_menu_screen.dart';
 import 'package:projects/views/screens/settings_screen.dart';
 import 'package:provider/provider.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _selectedIndex = 0;
+
+  void _onNavTap(int index) {
+    if (index == 1) {
+      Navigator.push(
+        context,
+        PageRouteBuilder(
+          pageBuilder: (_, animation, __) => const AssessmentScreen(),
+          transitionsBuilder: (_, animation, __, child) {
+            return SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(1.0, 0),
+                end: Offset.zero,
+              ).animate(CurvedAnimation(
+                parent: animation,
+                curve: Curves.easeOutCubic,
+              )),
+              child: child,
+            );
+          },
+          transitionDuration: const Duration(milliseconds: 350),
+        ),
+      );
+      return;
+    }
+    setState(() => _selectedIndex = index);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
+      extendBody: true,
       body: SafeArea(
         child: Consumer<HomeViewModel>(
           builder: (context, viewModel, child) {
@@ -36,7 +71,7 @@ class HomeScreen extends StatelessWidget {
                       _buildAssessmentProgressSection(viewModel),
                       const SizedBox(height: 24),
                       _buildQuickActionsSection(context),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 100),
                     ],
                   ),
                 ),
@@ -49,11 +84,12 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
+  // ── HEADER ──────────────────────────────────────────────────────────────────
+
   Widget _buildHeader(BuildContext context, HomeViewModel viewModel) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        // Smile face button (Child menu)
         Container(
           decoration: BoxDecoration(
             color: Colors.white,
@@ -78,16 +114,11 @@ class HomeScreen extends StatelessWidget {
               },
               child: Container(
                 padding: const EdgeInsets.all(12),
-                child: const Text(
-                  '😊',
-                  style: TextStyle(fontSize: 24),
-                ),
+                child: const Text('😊', style: TextStyle(fontSize: 24)),
               ),
             ),
           ),
         ),
-        
-        // Title
         const Text(
           'Hi Menna !',
           style: TextStyle(
@@ -96,8 +127,6 @@ class HomeScreen extends StatelessWidget {
             color: Color(0xFF2D3748),
           ),
         ),
-        
-        // Settings button
         Container(
           decoration: BoxDecoration(
             color: Colors.white,
@@ -135,9 +164,11 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
+  // ── CHILD PROGRESS CARD ─────────────────────────────────────────────────────
+
   Widget _buildChildProgressCard(HomeViewModel viewModel) {
     final child = viewModel.currentChild!;
-    
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -156,7 +187,6 @@ class HomeScreen extends StatelessWidget {
         children: [
           Row(
             children: [
-              // Avatar
               Container(
                 width: 56,
                 height: 56,
@@ -176,10 +206,7 @@ class HomeScreen extends StatelessWidget {
                   ],
                 ),
                 child: const Center(
-                  child: Text(
-                    '👦',
-                    style: TextStyle(fontSize: 32),
-                  ),
+                  child: Text('👦', style: TextStyle(fontSize: 32)),
                 ),
               ),
               const SizedBox(width: 16),
@@ -198,10 +225,7 @@ class HomeScreen extends StatelessWidget {
                     const SizedBox(height: 4),
                     const Text(
                       'Overall progress',
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Color(0xFF718096),
-                      ),
+                      style: TextStyle(fontSize: 13, color: Color(0xFF718096)),
                     ),
                   ],
                 ),
@@ -217,7 +241,6 @@ class HomeScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          // Progress bar
           Stack(
             children: [
               Container(
@@ -253,16 +276,15 @@ class HomeScreen extends StatelessWidget {
             alignment: Alignment.centerLeft,
             child: Text(
               'Last test: ${child.lastTestName}',
-              style: const TextStyle(
-                fontSize: 12,
-                color: Color(0xFF718096),
-              ),
+              style: const TextStyle(fontSize: 12, color: Color(0xFF718096)),
             ),
           ),
         ],
       ),
     );
   }
+
+  // ── ASSESSMENT INFO CARD ────────────────────────────────────────────────────
 
   Widget _buildAssessmentInfoCard() {
     return Container(
@@ -283,10 +305,7 @@ class HomeScreen extends StatelessWidget {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Text(
-                  '📋',
-                  style: TextStyle(fontSize: 28),
-                ),
+                child: const Text('📋', style: TextStyle(fontSize: 28)),
               ),
               const SizedBox(width: 16),
               const Expanded(
@@ -340,6 +359,8 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
+
+  // ── ASSESSMENT PROGRESS SECTION ─────────────────────────────────────────────
 
   Widget _buildAssessmentProgressSection(HomeViewModel viewModel) {
     return Column(
@@ -417,11 +438,7 @@ class HomeScreen extends StatelessWidget {
                     color: bgColor,
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(
-                    iconData,
-                    color: iconColor,
-                    size: 24,
-                  ),
+                  child: Icon(iconData, color: iconColor, size: 24),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
@@ -475,6 +492,8 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
+  // ── QUICK ACTIONS ───────────────────────────────────────────────────────────
+
   Widget _buildQuickActionsSection(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -526,10 +545,7 @@ class HomeScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: const Center(
-                        child: Text(
-                          '👶',
-                          style: TextStyle(fontSize: 28),
-                        ),
+                        child: Text('👶', style: TextStyle(fontSize: 28)),
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -558,6 +574,8 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
+  // ── ANIMATED BOTTOM NAV ─────────────────────────────────────────────────────
+
   Widget _buildBottomNavBar(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
@@ -571,14 +589,14 @@ class HomeScreen extends StatelessWidget {
         ],
       ),
       child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
+        child: SizedBox(
+          height: 70,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildNavItem(Icons.home, 'Home', true),
-              _buildNavItem(Icons.assignment, 'Assessments', false),
-              _buildNavItem(Icons.person, 'Profile', false),
+              _buildNavItem(Icons.home_rounded, 'Home', 0),
+              _buildNavItem(Icons.assignment_rounded, 'Assessments', 1),
+              _buildNavItem(Icons.person_rounded, 'Profile', 2),
             ],
           ),
         ),
@@ -586,37 +604,92 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildNavItem(IconData icon, String label, bool isActive) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(
-          icon,
-          color: isActive ? const Color(0xFF3B82F6) : const Color(0xFF9CA3AF),
-          size: 24,
+  Widget _buildNavItem(IconData icon, String label, int index) {
+    final isActive = _selectedIndex == index;
+
+    return GestureDetector(
+      onTap: () => _onNavTap(index),
+      behavior: HitTestBehavior.opaque,
+      child: SizedBox(
+        width: 90,
+        height: 70,
+        child: Stack(
+          clipBehavior: Clip.none,
+          alignment: Alignment.center,
+          children: [
+            // Floating blue bubble
+            AnimatedPositioned(
+              duration: const Duration(milliseconds: 400),
+              curve: Curves.elasticOut,
+              top: isActive ? -22 : 8,
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 350),
+                curve: Curves.easeOutBack,
+                width: isActive ? 52 : 0,
+                height: isActive ? 52 : 0,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF3B82F6),
+                  shape: BoxShape.circle,
+                  boxShadow: isActive
+                      ? [
+                          BoxShadow(
+                            color: const Color(0xFF3B82F6).withOpacity(0.4),
+                            blurRadius: 12,
+                            offset: const Offset(0, 6),
+                          ),
+                        ]
+                      : [],
+                ),
+                child: isActive
+                    ? Icon(icon, color: Colors.white, size: 24)
+                    : const SizedBox.shrink(),
+              ),
+            ),
+
+            // Inactive icon
+            AnimatedOpacity(
+              duration: const Duration(milliseconds: 200),
+              opacity: isActive ? 0.0 : 1.0,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: Icon(
+                  icon,
+                  color: const Color(0xFF9CA3AF),
+                  size: 24,
+                ),
+              ),
+            ),
+
+            // Label
+            Positioned(
+              bottom: 6,
+              child: AnimatedDefaultTextStyle(
+                duration: const Duration(milliseconds: 250),
+                style: TextStyle(
+                  fontSize: 11,
+                  color: isActive
+                      ? const Color(0xFF3B82F6)
+                      : const Color(0xFF9CA3AF),
+                  fontWeight:
+                      isActive ? FontWeight.w700 : FontWeight.w400,
+                ),
+                child: Text(label),
+              ),
+            ),
+          ],
         ),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            color: isActive ? const Color(0xFF3B82F6) : const Color(0xFF9CA3AF),
-            fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
-          ),
-        ),
-      ],
+      ),
     );
   }
+
+  // ── EMPTY STATE ─────────────────────────────────────────────────────────────
 
   Widget _buildEmptyState(BuildContext context) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text(
-            '👶',
-            style: TextStyle(fontSize: 80),
-          ),
+          const Text('👶', style: TextStyle(fontSize: 80)),
           const SizedBox(height: 24),
           const Text(
             'No child added yet',
